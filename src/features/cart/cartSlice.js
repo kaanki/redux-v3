@@ -1,10 +1,28 @@
-import { createSlice } from "@reduxjs/toolkit";
-import orderItems from "../../orderItems";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { openModal } from "../modal/modalSlice";
+
+const url = "https://mocki.io/v1/51f76ebc-2c88-4953-86f8-82887dccfa53";
+
 const initialState = {
-  cartItems: orderItems,
+  cartItems: [],
   quantity: 4,
   total: 0,
+  isLoading: true,
 };
+
+export const getCartItems = createAsyncThunk(
+  "cart/getCartItems",
+  async (name, thunkAPI) => {
+    try {
+      thunkAPI.dispatch(openModal);
+      const resp = await axios(url);
+      return resp.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue("yanlış değerler geliyor.");
+    }
+  }
+);
 
 const cartSlice = createSlice({
   name: "cart",
@@ -37,6 +55,19 @@ const cartSlice = createSlice({
       state.quantity = quantity;
       state.total = total;
     },
+  },
+  extraReducers: function (builder) {
+    builder.addCase(getCartItems.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(getCartItems.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.cartItems = action.payload;
+    });
+    builder.addCase(getCartItems.rejected, (state, action) => {
+      console.log(action);
+      state.isLoading = false;
+    });
   },
 });
 
