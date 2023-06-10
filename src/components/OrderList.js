@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { clearCart } from '../features/cart/cartSlice'
-
 import OrderItem from './OrderItem'
+import { openModal } from '../features/modal/modalSlice'
 
 const OrderList = () => {
   const dispatch = useDispatch()
@@ -32,7 +32,7 @@ const OrderList = () => {
         <div>
           toplam tutar: <span>${total}</span>
         </div>
-        <button className='cart-clear' onClick={() => dispatch(clearCart())}>
+        <button className='cart-clear' onClick={() => dispatch(openModal())}>
           Sepeti Temizle
         </button>
       </footer>
